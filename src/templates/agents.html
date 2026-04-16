@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Agents</h1>
+
+<table class="agents-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Model Type</th>
+            <th>Status</th>
+            <th>Presenting Complaints</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for agent in agents %}
+        <tr>
+            <td>{{ agent.name }}</td>
+            <td><code class="mono">{{ agent.model_type }}</code></td>
+            <td><span class="status-badge status-{{ agent.status|lower }}">{{ agent.status }}</span></td>
+            <td>{{ agent.presenting_complaints or '—' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
