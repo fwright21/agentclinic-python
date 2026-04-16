@@ -61,13 +61,15 @@ async def save_diagnosis_run(
     completion_tokens: int,
     total_tokens: int,
     therapy_id: Optional[int] = None,
+    visit_number: int = 1,
+    outcome: str = "OPEN",
 ) -> int:
     """Save a diagnosis run and return its ID."""
     async with aiosqlite.connect(DB_PATH) as db:
         cursor = await db.execute(
             """INSERT INTO diagnosis_runs
-               (agent_id, ailment_id, submitted_symptoms, report, prompt_tokens, completion_tokens, total_tokens, therapy_id)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+               (agent_id, ailment_id, submitted_symptoms, report, prompt_tokens, completion_tokens, total_tokens, therapy_id, visit_number, outcome)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 agent_id,
                 ailment_id,
@@ -77,6 +79,8 @@ async def save_diagnosis_run(
                 completion_tokens,
                 total_tokens,
                 therapy_id,
+                visit_number,
+                outcome,
             ),
         )
         await db.commit()

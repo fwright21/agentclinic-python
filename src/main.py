@@ -21,6 +21,14 @@ from src.dashboard import (
     get_ailment_frequency,
     get_recent_diagnosis_runs,
 )
+from src.visits import (
+    assign_visit_number,
+    check_and_apply_chronic,
+    sync_agent_status,
+    get_all_visits_for_agent,
+    update_visit_outcome,
+    get_agent_id_for_visit,
+)
 
 load_dotenv()
 
@@ -49,10 +57,11 @@ async def agent_detail(request: Request, agent_id: int):
     agent = await get_agent_by_id(agent_id)
     if not agent:
         return HTMLResponse("Agent not found", status_code=404)
-    last_diagnosis = await get_last_diagnosis_for_agent(agent_id)
+    visits = await get_all_visits_for_agent(agent_id)
+    last_diagnosis = visits[0] if visits else None
     return HTMLResponse(
         templates.get_template("agent_detail.html").render(
-            request=request, agent=agent, last_diagnosis=last_diagnosis
+            request=request, agent=agent, visits=visits, last_diagnosis=last_diagnosis
         )
     )
 
@@ -71,7 +80,9 @@ async def diagnose_agent(request: Request, agent_id: int, symptoms: str = Form(.
     therapy = await get_therapy_by_name(result["therapy_name"])
     therapy_id = therapy["id"] if therapy else None
 
-    await save_diagnosis_run(
+    visit_number = await assign_visit_number(agent_id)
+
+    diagnosis_id = await save_diagnosis_run(
         agent_id=agent_id,
         ailment_id=ailment_id,
         symptoms=symptoms,
@@ -80,7 +91,14 @@ async def diagnose_agent(request: Request, agent_id: int, symptoms: str = Form(.
         completion_tokens=result["completion_tokens"],
         total_tokens=result["total_tokens"],
         therapy_id=therapy_id,
+        visit_number=visit_number,
+        outcome="OPEN",
     )
+
+    if ailment_id:
+        await check_and_apply_chronic(agent_id, ailment_id)
+
+    await sync_agent_status(agent_id)
 
     return RedirectResponse(url=f"/agents/{agent_id}", status_code=303)
 
@@ -120,3 +138,24 @@ async def dashboard(request: Request):
             recent_runs=recent_runs,
         )
     )
+
+
+@app.post("/agents/{agent_id}/visits/{visit_id}/outcome")
+async def update_visit_outcome_route(
+    request: Request,
+    agent_id: int,
+    visit_id: int,
+    outcome: str = Form(...),
+):
+    agent = await get_agent_by_id(agent_id)
+    if not agent:
+        return HTMLResponse("Agent not found", status_code=404)
+
+    actual_agent_id = await get_agent_id_for_visit(visit_id)
+    if actual_agent_id != agent_id:
+        return HTMLResponse("Visit not found for this agent", status_code=404)
+
+    await update_visit_outcome(visit_id, outcome)
+    await sync_agent_status(agent_id)
+
+    return RedirectResponse(url=f"/agents/{agent_id}", status_code=303)

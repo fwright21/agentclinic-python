@@ -56,12 +56,12 @@ Spec-first: every phase gets a `specs/YYYY-MM-DD-<name>/` directory containing
   - Appointment queue: upcoming appointments with status
 
 ## Phase 9 — Visit Log + Outcomes
-- [ ] `outcome` + `visit_number` columns added to `diagnosis_runs`
-- [ ] Full visit history on agent detail page
-- [ ] Staff or agent submits symptoms via existing form — same chain
-- [ ] Manual outcome update: OPEN / RESOLVED / RECURRING
-- [ ] Auto-CHRONIC: 3+ runs with same ailment → all flagged CHRONIC
-- [ ] Agent status synced after each diagnosis or outcome update
+- [x] `outcome` + `visit_number` columns added to `diagnosis_runs`
+- [x] Full visit history on agent detail page
+- [x] Staff or agent submits symptoms via existing form — same chain
+- [x] Manual outcome update: OPEN / RESOLVED / RECURRING
+- [x] Auto-CHRONIC: 3+ runs with same ailment → all flagged CHRONIC
+- [x] Agent status synced after each diagnosis or outcome update
 
 ## Phase 10 — Polish + Tests
 - [ ] Error pages (404, 500)

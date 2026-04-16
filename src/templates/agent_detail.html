@@ -68,25 +68,47 @@
         </form>
     </div>
 
-    {% if last_diagnosis %}
-    <div class="section diagnosis-result">
-        <h2>Last Diagnosis</h2>
-        <div class="diagnosis-card">
-            <p class="diagnosis-report">{{ last_diagnosis.report }}</p>
-            <div class="diagnosis-meta">
-                <span class="tag">{{ last_diagnosis.ailment_name }}</span>
-                {% if last_diagnosis.therapy_name %}
-                <span class="tag tag-therapy">{{ last_diagnosis.therapy_name }}</span>
-                {% endif %}
-                <span class="diagnosis-tokens mono">
-                    {{ last_diagnosis.total_tokens }} tokens
-                    {% if last_diagnosis.total_tokens and last_diagnosis.total_tokens > 1000 %}
-                    <span class="token-flag">⚠️ high</span>
-                    {% endif %}
-                </span>
-                <span class="diagnosis-date">{{ last_diagnosis.created_at }}</span>
-            </div>
-        </div>
+    {% if visits %}
+    <div class="section">
+        <h2>Visit History</h2>
+        <table class="visit-table">
+            <thead>
+                <tr>
+                    <th>Visit #</th>
+                    <th>Date</th>
+                    <th>Ailment</th>
+                    <th>Therapy</th>
+                    <th>Symptoms</th>
+                    <th>Report</th>
+                    <th>Outcome</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for visit in visits %}
+                <tr>
+                    <td>{{ visit.visit_number }}</td>
+                    <td>{{ visit.created_at }}</td>
+                    <td>{{ visit.ailment_name or '—' }}</td>
+                    <td>{{ visit.therapy_name or '—' }}</td>
+                    <td class="cell-symptoms">{{ visit.submitted_symptoms[:50] }}{% if visit.submitted_symptoms|length > 50 %}...{% endif %}</td>
+                    <td class="cell-report">{{ visit.report[:100] }}{% if visit.report|length > 100 %}...{% endif %}</td>
+                    <td>
+                        <span class="outcome-badge outcome-{{ visit.outcome|lower }}">{{ visit.outcome }}</span>
+                        {% if visit.outcome != 'CHRONIC' %}
+                        <form method="post" action="/agents/{{ agent.id }}/visits/{{ visit.id }}/outcome" class="outcome-form">
+                            <select name="outcome">
+                                <option value="OPEN" {% if visit.outcome == 'OPEN' %}selected{% endif %}>OPEN</option>
+                                <option value="RESOLVED" {% if visit.outcome == 'RESOLVED' %}selected{% endif %}>RESOLVED</option>
+                                <option value="RECURRING" {% if visit.outcome == 'RECURRING' %}selected{% endif %}>RECURRING</option>
+                            </select>
+                            <button type="submit" class="btn-small">Update</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
     {% endif %}
 </div>

@@ -470,3 +470,100 @@ h1 {
         display: none;
     }
 }
+
+/* Visit table */
+.visit-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    font-size: 0.875rem;
+}
+
+.visit-table th,
+.visit-table td {
+    padding: var(--space-2);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.visit-table th {
+    font-weight: 600;
+    background-color: var(--color-bg);
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.visit-table tbody tr:hover {
+    background-color: var(--color-bg);
+}
+
+.cell-symptoms, .cell-report {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Outcome badges */
+.outcome-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.outcome-open {
+    background-color: var(--status-active);
+    color: white;
+}
+
+.outcome-resolved {
+    background-color: var(--status-resolved);
+    color: white;
+}
+
+.outcome-recurring {
+    background-color: var(--status-recurring);
+    color: white;
+}
+
+.outcome-chronic {
+    background-color: var(--status-chronic);
+    color: white;
+}
+
+/* Outcome form */
+.outcome-form {
+    display: flex;
+    gap: var(--space-1);
+    align-items: center;
+    margin-top: var(--space-1);
+}
+
+.outcome-form select {
+    padding: 4px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    background-color: var(--color-surface);
+}
+
+.btn-small {
+    padding: 4px 8px;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-small:hover {
+    opacity: 0.9;
+}
