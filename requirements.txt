@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+jinja2
+python-dotenv
+httpx
+pytest
+pytest-asyncio
+langchain
+langchain-anthropic
+aiosqlite
