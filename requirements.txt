@@ -7,5 +7,7 @@ pytest
 pytest-asyncio
 langchain
 langchain-anthropic
+langchain-groq
 pydantic
 aiosqlite
+python-multipart

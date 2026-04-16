@@ -40,14 +40,13 @@ Spec-first: every phase gets a `specs/YYYY-MM-DD-<name>/` directory containing
 ## Phase 6 — Therapies Catalog
 - [ ] `therapies` table + seed data
 - [ ] `/therapies` list page
-- [ ] Map ailments → recommended therapies
+- [ ] Map ailments → recommended therapies (join table)
 - [ ] Diagnosis chain updated to include treatment prescription
+- [ ] ⚠️ Prolog flag: if ailment catalog grows beyond ~10 ailments with overlapping symptom patterns, consider replacing LangChain classification with a Prolog rule engine (see Phase 6 spec)
 
-## Phase 7 — Appointment Booking
-- [ ] `appointments` table (agent_id, ailment_id, datetime, status)
-- [ ] Form to book an appointment from an agent's detail page
-- [ ] Validation + confirmation page
-- [ ] Appointment status: PENDING / ACTIVE / CLOSED
+## Phase 7 — Visit Log (replaces Appointment Booking)
+- [ ] Merged into Phase 9 — visits are created automatically when a diagnosis runs
+- [ ] No manual appointment booking — agents "visit" when they submit symptoms
 
 ## Phase 8 — Staff Dashboard
 - [ ] `/dashboard` with four views:

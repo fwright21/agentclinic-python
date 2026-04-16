@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Ailments</h1>
+
+<table class="agents-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Recommended Treatment</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ailment in ailments %}
+        <tr>
+            <td><strong>{{ ailment.name }}</strong></td>
+            <td>{{ ailment.description }}</td>
+            <td>{{ ailment.recommended_treatment }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
