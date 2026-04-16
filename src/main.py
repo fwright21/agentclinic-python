@@ -7,6 +7,10 @@ load_dotenv()
 
 app = FastAPI()
 
+from src.api import router as api_router
+
+app.include_router(api_router)
+
 
 class Message(BaseModel):
     message: str

@@ -10,6 +10,9 @@
 - [ ] `remedies` table created in AIBriefing SQLite
 - [ ] `add_remedy()` called after successful diagnosis
 - [ ] `get_pending_remedies()` returns pending items
+- [ ] Evening digest shows "Agent Health Today" card with today's diagnosis runs
+- [ ] Insights dashboard stat row shows pending remedy count
+- [ ] Insights dashboard shows "Agent Health Trends" bar chart (top ailments, 7 days)
 - [ ] Daily briefing HTML shows remedy count
 - [ ] `chat.py` "review remedies" walks through pending items
 - [ ] Approve → status updates to APPROVED in AIBriefing

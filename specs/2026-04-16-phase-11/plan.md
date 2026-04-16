@@ -53,7 +53,22 @@ AIBriefing/
    - On approve → call AgentClinic `PATCH /api/diagnose/{id}/approve`
 
 7. Update briefing HTML:
-   - Add remedies count to summary section
+
+   **`evening_digest.py` — `generate_evening_html()`:**
+   - Query `get_remedy_count()` (PENDING) and `get_recent_diagnoses(days=1)` from `remedies.py`
+   - Add a new glass-card section: **"🩺 Agent Health Today"**
+     - Stat: N remedies pending review
+     - List: each diagnosis run from today — agent name, ailment, therapy, status badge
+     - Link: "Open AgentClinic" → `http://localhost:8000/agents`
+   - Only render card if there were any diagnosis runs today
+
+   **`insights_dashboard.py`:**
+   - Query `get_ailment_frequency(days=7)` and `get_remedy_count()` from `remedies.py`
+   - Add a 4th stat box to the existing `.stat-row`: **"Remedies"** (PENDING count)
+   - Add a new glass-card section after Topic Velocity: **"🩺 Agent Health Trends"**
+     - Bar chart (Chart.js — already imported) showing top ailments by frequency over 7 days
+     - Below chart: list each ailment with count + most common therapy prescribed
+     - Labelled: "Most Common Issues (7 days)"
 
 ### Skill
 
