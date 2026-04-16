@@ -1,0 +1,131 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    /* Colours — base palette */
+    --color-bg: #F8FAFC;
+    --color-surface: #FFFFFF;
+    --color-border: #E2E8F0;
+    --color-primary: #2563EB;
+    --color-text: #0F172A;
+    --color-text-muted: #64748B;
+
+    /* Colours — status */
+    --status-resolved: #10B981;
+    --status-active: #3B82F6;
+    --status-recurring: #F59E0B;
+    --status-chronic: #EF4444;
+    --status-unknown: #94A3B8;
+
+    /* Colours — severity */
+    --severity-low: #22C55E;
+    --severity-medium: #F59E0B;
+    --severity-high: #F97316;
+    --severity-critical: #DC2626;
+
+    /* Typography */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+    /* Spacing */
+    --space-1: 8px;
+    --space-2: 16px;
+    --space-3: 24px;
+    --space-4: 32px;
+    --space-5: 40px;
+    --space-6: 48px;
+
+    /* Layout */
+    --max-width: 1200px;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--space-3);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.logo:hover {
+    text-decoration: none;
+}
+
+.nav {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.nav a {
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.nav a:hover,
+.nav a.active {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.main {
+    padding: var(--space-5) 0;
+    min-height: calc(100vh - 140px);
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-3);
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+}
+
+.mono {
+    font-family: var(--font-mono);
+}
