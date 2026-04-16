@@ -8,10 +8,10 @@ Spec-first: every phase gets a `specs/YYYY-MM-DD-<name>/` directory containing
 
 ---
 
-## Phase 1 — Hello FastAPI
-- [ ] Install FastAPI + uvicorn, configure dev server
-- [ ] Single `/` route returning "AgentClinic is open for business"
-- [ ] Confirm Python types and Pydantic wiring work end-to-end
+## Phase 1 — Hello FastAPI ✅
+- [x] Install FastAPI + uvicorn, configure dev server
+- [x] Single `/` route returning "AgentClinic is open for business"
+- [x] Confirm Python types and Pydantic wiring work end-to-end
 
 ## Phase 2 — Base Layout
 - [ ] Jinja2 templates: shared layout (header, nav, main, footer)

@@ -7,4 +7,5 @@ pytest
 pytest-asyncio
 langchain
 langchain-anthropic
+pydantic
 aiosqlite
