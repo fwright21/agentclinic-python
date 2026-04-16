@@ -61,6 +61,9 @@
 
     <div class="section">
         <h2>Run Diagnosis</h2>
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
         <form method="post" action="/agents/{{ agent.id }}/diagnose" class="diagnosis-form">
             <label for="symptoms">Describe the symptoms</label>
             <textarea id="symptoms" name="symptoms" rows="4" placeholder="e.g. Agent is repeating the same response and ignoring new instructions..." required></textarea>

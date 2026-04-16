@@ -64,11 +64,11 @@ Spec-first: every phase gets a `specs/YYYY-MM-DD-<name>/` directory containing
 - [x] Agent status synced after each diagnosis or outcome update
 
 ## Phase 10 — Polish + Tests
-- [ ] Error pages (404, 500)
-- [ ] Input sanitisation on all forms
-- [ ] Basic logging middleware
-- [ ] pytest + httpx test suite covering all routes
-- [ ] Async test configuration (pytest-asyncio)
+- [x] Error pages (404, 500)
+- [x] Input sanitisation on all forms
+- [x] Basic logging middleware
+- [x] pytest + httpx test suite covering all routes
+- [x] Async test configuration (pytest-asyncio)
 
 ---
 

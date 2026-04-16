@@ -2,7 +2,17 @@ from fastapi import FastAPI, Request, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.exceptions import RequestValidationError
 from dotenv import load_dotenv
+import logging
+import time
+from starlette.middleware.base import BaseHTTPMiddleware
+
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
+)
+logger = logging.getLogger("agentclinic")
 
 from src.database import (
     get_all_agents,
@@ -34,6 +44,20 @@ load_dotenv()
 
 app = FastAPI()
 
+
+class LoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        start_time = time.time()
+        response = await call_next(request)
+        duration = (time.time() - start_time) * 1000
+        logger.info(
+            f"{request.method} {request.url.path} {response.status_code} {duration:.1f}ms"
+        )
+        return response
+
+
+app.add_middleware(LoggingMiddleware)
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="src/templates")
@@ -42,6 +66,30 @@ templates = Jinja2Templates(directory="src/templates")
 @app.get("/")
 def read_root(request: Request):
     return HTMLResponse(templates.get_template("index.html").render(request=request))
+
+
+@app.exception_handler(404)
+async def custom_404_handler(request: Request, exc):
+    return HTMLResponse(
+        templates.get_template("404.html").render(request=request),
+        status_code=404,
+    )
+
+
+@app.exception_handler(500)
+async def custom_500_handler(request: Request, exc):
+    return HTMLResponse(
+        templates.get_template("500.html").render(request=request),
+        status_code=500,
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc):
+    return HTMLResponse(
+        templates.get_template("400.html").render(request=request, error=str(exc)),
+        status_code=400,
+    )
 
 
 @app.get("/agents")
@@ -59,9 +107,14 @@ async def agent_detail(request: Request, agent_id: int):
         return HTMLResponse("Agent not found", status_code=404)
     visits = await get_all_visits_for_agent(agent_id)
     last_diagnosis = visits[0] if visits else None
+    error = request.query_params.get("error")
     return HTMLResponse(
         templates.get_template("agent_detail.html").render(
-            request=request, agent=agent, visits=visits, last_diagnosis=last_diagnosis
+            request=request,
+            agent=agent,
+            visits=visits,
+            last_diagnosis=last_diagnosis,
+            error=error,
         )
     )
 
@@ -71,6 +124,13 @@ async def diagnose_agent(request: Request, agent_id: int, symptoms: str = Form(.
     agent = await get_agent_by_id(agent_id)
     if not agent:
         return HTMLResponse("Agent not found", status_code=404)
+
+    symptoms = symptoms.strip()
+    if len(symptoms) < 10:
+        return RedirectResponse(
+            url=f"/agents/{agent_id}?error=Symptoms must be at least 10 characters",
+            status_code=303,
+        )
 
     result = await run_diagnosis(agent["name"], symptoms)
 
