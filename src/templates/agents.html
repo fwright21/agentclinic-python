@@ -15,7 +15,7 @@
     <tbody>
         {% for agent in agents %}
         <tr>
-            <td>{{ agent.name }}</td>
+            <td><a href="/agents/{{ agent.id }}">{{ agent.name }}</a></td>
             <td><code class="mono">{{ agent.model_type }}</code></td>
             <td><span class="status-badge status-{{ agent.status|lower }}">{{ agent.status }}</span></td>
             <td>{{ agent.presenting_complaints or '—' }}</td>

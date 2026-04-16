@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/agents" class="back-link">← Back to Agents</a>
+
+<h1>{{ agent.name }}</h1>
+
+<div class="agent-detail">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">Model Type</span>
+            <code class="mono">{{ agent.model_type }}</code>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Reasoning Level</span>
+            <span class="reasoning-badge">{{ agent.reasoning_level }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="status-badge status-{{ agent.status|lower }}">{{ agent.status }}</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Presenting Complaints</h2>
+        <p>{{ agent.presenting_complaints or 'None recorded' }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Skills</h2>
+        <div class="tags">
+            {% for skill in agent.skills.split(',') if agent.skills %}
+            <span class="tag">{{ skill.strip() }}</span>
+            {% else %}
+            <span class="tag tag-empty">—</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Tools</h2>
+        <div class="tags">
+            {% for tool in agent.tools.split(',') if agent.tools %}
+            <span class="tag">{{ tool.strip() }}</span>
+            {% else %}
+            <span class="tag tag-empty">—</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>MCPs</h2>
+        <div class="tags">
+            {% for mcp in agent.mcps.split(',') if agent.mcps %}
+            <span class="tag">{{ mcp.strip() }}</span>
+            {% else %}
+            <span class="tag tag-empty">—</span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
