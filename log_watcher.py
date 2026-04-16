@@ -58,12 +58,11 @@ def check_log_file(log_path: str):
     with open(log_path, "r") as f:
         f.seek(last_pos)
         new_lines = f.readlines()
+        new_pos = f.tell()
+        save_last_position(log_path, new_pos)
 
     if not new_lines:
         return
-
-    new_pos = f.tell()
-    save_last_position(log_path, new_pos)
 
     content = "".join(new_lines[-5:])  # Last 5 lines for context
 

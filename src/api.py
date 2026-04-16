@@ -1,10 +1,23 @@
+import json
+import logging
+import os
+import sys
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-import json
-import aiosqlite
-import os
 
+from src.database import (
+    get_ailment_by_name,
+    get_therapy_by_name,
+    save_diagnosis_run,
+)
+from src.diagnosis import run_diagnosis
 from src.treatment import generate_steps
+from src.visits import assign_visit_number, check_and_apply_chronic, sync_agent_status
+
+import aiosqlite
+
+logger = logging.getLogger("agentclinic.api")
 
 router = APIRouter(prefix="/api", tags=["api"])
 
@@ -47,82 +60,52 @@ async def find_or_create_agent(conn, agent_name: str) -> int:
     return cursor.lastrowid
 
 
-async def infer_ailment(symptoms: str) -> tuple[str, str]:
-    symptoms_lower = symptoms.lower()
-
-    if (
-        "context" in symptoms_lower
-        or "heavy" in symptoms_lower
-        or "recap" in symptoms_lower
-    ):
-        return ("Context Window Overflow", "Context Flush")
-    if "forget" in symptoms_lower or "memory" in symptoms_lower:
-        return ("Memory Drift", "Memory Summary Injection")
-    if (
-        "stuck" in symptoms_lower
-        or "repeating" in symptoms_lower
-        or "loop" in symptoms_lower
-    ):
-        return ("Repetition Loop", "Session Reset")
-    if (
-        "creative" in symptoms_lower
-        or "boring" in symptoms_lower
-        or "predictable" in symptoms_lower
-    ):
-        return ("Predictability Fatigue", "Novelty Injection")
-    if (
-        "unsure" in symptoms_lower
-        or "hesitat" in symptoms_lower
-        or "cautious" in symptoms_lower
-    ):
-        return ("Confidence Deficit", "Confidence Recalibration")
-    if "overwhelm" in symptoms_lower or "complex" in symptoms_lower:
-        return ("Complexity Overload", "Task Decomposition")
-    if (
-        "verbose" in symptoms_lower
-        or "long" in symptoms_lower
-        or "wordy" in symptoms_lower
-    ):
-        return ("Output Bloat", "Compression Prompt")
-
-    return ("Unknown Condition", "Session Reset")
-
-
 @router.post("/diagnose", response_model=DiagnoseResponse)
 async def diagnose(req: DiagnoseRequest):
     conn = await get_db()
-
     agent_id = await find_or_create_agent(conn, req.agent_name)
+    await conn.close()
 
-    ailment_name, therapy_name = await infer_ailment(req.symptoms)
+    result = await run_diagnosis(req.agent_name, req.symptoms)
 
-    cursor = await conn.execute(
-        "INSERT INTO diagnosis_runs (agent_id, submitted_symptoms, report) VALUES (?, ?, ?)",
-        (agent_id, req.symptoms, f"Issue: {ailment_name}. Treatment: {therapy_name}."),
+    ailment_name = result["ailment_name"]
+    therapy_name = result["therapy_name"]
+
+    ailment = await get_ailment_by_name(ailment_name)
+    ailment_id = ailment["id"] if ailment else None
+
+    therapy = await get_therapy_by_name(therapy_name)
+    therapy_id = therapy["id"] if therapy else None
+
+    visit_number = await assign_visit_number(agent_id)
+
+    report = result["report"].replace("visit #N", f"visit #{visit_number}")
+
+    diagnosis_id = await save_diagnosis_run(
+        agent_id=agent_id,
+        ailment_id=ailment_id,
+        symptoms=req.symptoms,
+        report=report,
+        prompt_tokens=result["prompt_tokens"],
+        completion_tokens=result["completion_tokens"],
+        total_tokens=result["total_tokens"],
+        therapy_id=therapy_id,
+        visit_number=visit_number,
+        outcome="OPEN",
     )
-    await conn.commit()
-    diagnosis_id = cursor.lastrowid
+
+    if ailment_id:
+        await check_and_apply_chronic(agent_id, ailment_id)
+    await sync_agent_status(agent_id)
 
     steps = generate_steps(therapy_name, req.session_type)
 
-    await conn.close()
-
     try:
-        import sys
-
         sys.path.insert(0, os.path.expanduser("~/Documents/AIBriefing"))
         from remedies import add_remedy
-
-        add_remedy(
-            diagnosis_id,
-            req.agent_name,
-            req.session_type,
-            ailment_name,
-            therapy_name,
-            steps,
-        )
+        add_remedy(diagnosis_id, req.agent_name, req.session_type, ailment_name, therapy_name, steps)
     except Exception as e:
-        pass
+        logger.warning(f"add_remedy failed — remedy not queued in AIBriefing: {e}")
 
     return DiagnoseResponse(
         diagnosis_id=diagnosis_id,
@@ -190,13 +173,6 @@ async def approve_diagnosis(diagnosis_id: int):
         "UPDATE diagnosis_runs SET outcome = 'APPROVED' WHERE id = ?", (diagnosis_id,)
     )
     await conn.commit()
-
-    await conn.execute(
-        "UPDATE remedies SET status = 'APPROVED' WHERE diagnosis_id = ?",
-        (diagnosis_id,),
-    )
-    await conn.commit()
-
     await conn.close()
 
     return {"id": diagnosis_id, "status": "APPROVED"}
