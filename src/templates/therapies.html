@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Therapies</h1>
+
+<table class="agents-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Linked Ailments</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for therapy in therapies %}
+        <tr>
+            <td><strong>{{ therapy.name }}</strong></td>
+            <td>{{ therapy.description }}</td>
+            <td>
+                {% if therapy.ailment_names %}
+                {% for ailment in therapy.ailment_names.split(',') %}
+                <span class="tag">{{ ailment.strip() }}</span>
+                {% endfor %}
+                {% else %}
+                <span class="tag tag-empty">—</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

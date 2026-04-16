@@ -9,10 +9,18 @@ from src.database import (
     get_agent_by_id,
     get_all_ailments,
     get_ailment_by_name,
+    get_all_therapies,
+    get_therapy_by_name,
     save_diagnosis_run,
     get_last_diagnosis_for_agent,
 )
 from src.diagnosis import run_diagnosis
+from src.dashboard import (
+    get_summary_counts,
+    get_agent_health_table,
+    get_ailment_frequency,
+    get_recent_diagnosis_runs,
+)
 
 load_dotenv()
 
@@ -60,6 +68,9 @@ async def diagnose_agent(request: Request, agent_id: int, symptoms: str = Form(.
     ailment = await get_ailment_by_name(result["ailment_name"])
     ailment_id = ailment["id"] if ailment else None
 
+    therapy = await get_therapy_by_name(result["therapy_name"])
+    therapy_id = therapy["id"] if therapy else None
+
     await save_diagnosis_run(
         agent_id=agent_id,
         ailment_id=ailment_id,
@@ -68,6 +79,7 @@ async def diagnose_agent(request: Request, agent_id: int, symptoms: str = Form(.
         prompt_tokens=result["prompt_tokens"],
         completion_tokens=result["completion_tokens"],
         total_tokens=result["total_tokens"],
+        therapy_id=therapy_id,
     )
 
     return RedirectResponse(url=f"/agents/{agent_id}", status_code=303)
@@ -77,5 +89,34 @@ async def diagnose_agent(request: Request, agent_id: int, symptoms: str = Form(.
 async def list_ailments(request: Request):
     ailments = await get_all_ailments()
     return HTMLResponse(
-        templates.get_template("ailments.html").render(request=request, ailments=ailments)
+        templates.get_template("ailments.html").render(
+            request=request, ailments=ailments
+        )
+    )
+
+
+@app.get("/therapies")
+async def list_therapies(request: Request):
+    therapies = await get_all_therapies()
+    return HTMLResponse(
+        templates.get_template("therapies.html").render(
+            request=request, therapies=therapies
+        )
+    )
+
+
+@app.get("/dashboard")
+async def dashboard(request: Request):
+    summary_counts = await get_summary_counts()
+    agent_health = await get_agent_health_table()
+    ailment_freq = await get_ailment_frequency()
+    recent_runs = await get_recent_diagnosis_runs(limit=10)
+    return HTMLResponse(
+        templates.get_template("dashboard.html").render(
+            request=request,
+            summary_counts=summary_counts,
+            agent_health=agent_health,
+            ailment_freq=ailment_freq,
+            recent_runs=recent_runs,
+        )
     )

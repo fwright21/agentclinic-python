@@ -38,10 +38,10 @@ Spec-first: every phase gets a `specs/YYYY-MM-DD-<name>/` directory containing
 - [ ] Plain-English report output: "Issue: X. Treatment: Y. Logged: visit #N."
 
 ## Phase 6 — Therapies Catalog
-- [ ] `therapies` table + seed data
-- [ ] `/therapies` list page
-- [ ] Map ailments → recommended therapies (join table)
-- [ ] Diagnosis chain updated to include treatment prescription
+- [x] `therapies` table + seed data
+- [x] `/therapies` list page
+- [x] Map ailments → recommended therapies (join table)
+- [x] Diagnosis chain updated to include treatment prescription
 - [ ] ⚠️ Prolog flag: if ailment catalog grows beyond ~10 ailments with overlapping symptom patterns, consider replacing LangChain classification with a Prolog rule engine (see Phase 6 spec)
 
 ## Phase 7 — Visit Log (replaces Appointment Booking)
@@ -49,17 +49,19 @@ Spec-first: every phase gets a `specs/YYYY-MM-DD-<name>/` directory containing
 - [ ] No manual appointment booking — agents "visit" when they submit symptoms
 
 ## Phase 8 — Staff Dashboard
-- [ ] `/dashboard` with four views:
+- [x] `/dashboard` with four views:
   - Summary counts: total agents, open appointments, active ailments
   - Agent health table: current ailment + token usage flagged if high
   - Ailment trends: most common ailments, treatment effectiveness rates
   - Appointment queue: upcoming appointments with status
 
-## Phase 9 — Follow-up + Visit States
-- [ ] `visits` table linking agents to diagnosis runs + outcomes
-- [ ] Agent re-submission detects prior visit → triggers follow-up flow
-- [ ] Diagnosis chain evaluates outcome: RESOLVED / RECURRING / CHRONIC
-- [ ] CHRONIC (3+ recurrences of same ailment) flagged for staff attention
+## Phase 9 — Visit Log + Outcomes
+- [ ] `outcome` + `visit_number` columns added to `diagnosis_runs`
+- [ ] Full visit history on agent detail page
+- [ ] Staff or agent submits symptoms via existing form — same chain
+- [ ] Manual outcome update: OPEN / RESOLVED / RECURRING
+- [ ] Auto-CHRONIC: 3+ runs with same ailment → all flagged CHRONIC
+- [ ] Agent status synced after each diagnosis or outcome update
 
 ## Phase 10 — Polish + Tests
 - [ ] Error pages (404, 500)

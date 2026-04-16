@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Dashboard</h1>
+
+<section class="summary-cards">
+    <div class="summary-card">
+        <span class="summary-value">{{ summary_counts.total_agents }}</span>
+        <span class="summary-label">Total Agents</span>
+    </div>
+    <div class="summary-card">
+        <span class="summary-value">{{ summary_counts.total_runs }}</span>
+        <span class="summary-label">Diagnosis Runs</span>
+    </div>
+    <div class="summary-card">
+        <span class="summary-value">{{ summary_counts.active_ailments }}</span>
+        <span class="summary-label">Active Ailments</span>
+    </div>
+    <div class="summary-card{% if summary_counts.flagged_agents > 0 %} summary-card-warning{% endif %}">
+        <span class="summary-value">{{ summary_counts.flagged_agents }}</span>
+        <span class="summary-label">Flagged Agents</span>
+    </div>
+</section>
+
+<section class="dashboard-section">
+    <h2>Agent Health</h2>
+    <table class="agents-table">
+        <thead>
+            <tr>
+                <th>Agent</th>
+                <th>Model</th>
+                <th>Status</th>
+                <th>Recent Ailment</th>
+                <th>Last Diagnosis</th>
+                <th>Tokens</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for agent in agent_health %}
+            <tr>
+                <td><a href="/agents/{{ agent.id }}">{{ agent.name }}</a></td>
+                <td><code>{{ agent.model_type }}</code></td>
+                <td><span class="status-badge status-{{ agent.status|lower }}">{{ agent.status }}</span></td>
+                <td>{{ agent.ailment_name or '—' }}</td>
+                <td>{{ agent.last_diagnosis or '—' }}</td>
+                <td>
+                    {% if agent.has_high_tokens %}
+                    <span class="token-flag">⚠️ {{ agent.total_tokens }}</span>
+                    {% else %}
+                    <span class="mono">{{ agent.total_tokens or 0 }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="dashboard-section">
+    <h2>Ailment Frequency</h2>
+    <div class="frequency-list">
+        {% for ailment in ailment_freq %}
+        <div class="frequency-item">
+            <span class="frequency-name">{{ ailment.name }}</span>
+            <span class="frequency-count">{{ ailment.run_count }}</span>
+            <div class="bar-track">
+                <div class="bar-fill" style="width: {{ (ailment.run_count / ailment_freq[0].run_count * 100)|round(1) }}%"></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="dashboard-section">
+    <h2>Recent Diagnosis Runs</h2>
+    <table class="agents-table">
+        <thead>
+            <tr>
+                <th>Agent</th>
+                <th>Ailment</th>
+                <th>Therapy</th>
+                <th>Tokens</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for run in recent_runs %}
+            <tr>
+                <td><a href="/agents/{% if run.agent_id %}{{ run.agent_id }}{% endif %}">{{ run.agent_name }}</a></td>
+                <td>{{ run.ailment_name or '—' }}</td>
+                <td>{{ run.therapy_name or '—' }}</td>
+                <td><span class="mono">{{ run.total_tokens or 0 }}</span></td>
+                <td>{{ run.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
