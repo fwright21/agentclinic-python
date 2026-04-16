@@ -12,6 +12,10 @@ TREATMENT_STEPS = {
             "Restart session with fresh context",
             "Provide summary of previous session to maintain continuity",
         ],
+        "bot": [
+            "Restart bot cleanly — no persistent state to flush",
+            "Verify bot restarts without errors",
+        ],
     },
     "Memory Summary Injection": {
         "claude-code": [
@@ -25,6 +29,10 @@ TREATMENT_STEPS = {
         "other": [
             "Create summary of current conversation",
             "Resume with summary as context",
+        ],
+        "bot": [
+            "Save current state to file",
+            "Restart bot and reload state",
         ],
     },
     "Instruction Set Reduction": {
@@ -62,6 +70,10 @@ TREATMENT_STEPS = {
             "Continue without prior context",
         ],
         "other": ["End current session cleanly", "Begin fresh session"],
+        "bot": [
+            "Kill duplicate bot processes: pkill -f <bot_name>.py",
+            "Restart bot via cron or launchctl",
+        ],
     },
     "Novelty Injection": {
         "claude-code": [
@@ -70,6 +82,9 @@ TREATMENT_STEPS = {
         ],
         "codex": ["Change effort level or model", "Try different model tier"],
         "other": ["Prompt for alternative strategies", "Request fresh perspective"],
+        "bot": [
+            "Flag for human review — not applicable for automated bots",
+        ],
     },
     "Confidence Recalibration": {
         "claude-code": [
@@ -86,6 +101,9 @@ TREATMENT_STEPS = {
         ],
         "codex": ["Split into multiple Codex tasks", "Chain tasks together"],
         "other": ["Divide problem into smaller steps", "Solve incrementally"],
+        "bot": [
+            "Flag for human review — not applicable for automated bots",
+        ],
     },
 }
 

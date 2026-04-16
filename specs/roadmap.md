@@ -84,13 +84,13 @@ Spec-first: every phase gets a `specs/YYYY-MM-DD-<name>/` directory containing
 - [x] End-to-end: session → diagnose → queue → approve → treatment steps
 
 ## Phase 12 — Real-Agent Self-Healing: Log Watcher + Human-in-the-Loop
-- [ ] `log_patterns.py` — error pattern registry (regex → agent/symptoms)
-- [ ] `log_watcher.py` — tails Pepper + AIBriefing error logs, POSTs on match
-- [ ] 30-minute dedup window (no repeat POSTs for same error)
-- [ ] `treatment.py` updated with `"bot"` session-type steps (manual instructions)
-- [ ] Evening digest: bot health subsection with "auto-detected" badge
-- [ ] Insights dashboard: bot issues frequency chart (7 days, by bot)
-- [ ] End-to-end: error in log → remedy in AIBriefing queue → approve via chat.py
+- [x] `log_patterns.py` — error pattern registry (regex → agent/symptoms)
+- [x] `log_watcher.py` — tails Pepper + AIBriefing error logs, POSTs on match
+- [x] 30-minute dedup window (no repeat POSTs for same error)
+- [x] `treatment.py` updated with `"bot"` session-type steps (manual instructions)
+- [x] Evening digest: bot health subsection with "auto-detected" badge
+- [x] Insights dashboard: bot issues frequency chart (7 days, by bot)
+- [x] End-to-end: error in log → remedy in AIBriefing queue → approve via chat.py
 
 ---
 
