@@ -71,5 +71,13 @@ Spec-first: every phase gets a `specs/YYYY-MM-DD-<name>/` directory containing
 
 ---
 
-Later phases (not yet planned): auth, deployment, reporting exports, API endpoint
-for agents to submit symptoms programmatically.
+## Phase 11 — Self-Healing: API, Treatment Executor, AIBriefing Integration
+- [ ] `POST /api/diagnose` — JSON endpoint for sessions to submit symptoms
+- [ ] Treatment step generator — maps therapy × session type to concrete steps
+- [ ] AIBriefing `remedies` table — pending approvals queue
+- [ ] `chat.py` "review remedies" command — approve/reject flow
+- [ ] Daily briefing shows remedy count
+- [ ] `/diagnose` skill for Claude Code / Codex sessions
+- [ ] End-to-end: session → diagnose → queue → approve → treatment steps
+
+Later phases (not yet planned): auth, deployment, reporting exports, automated symptom detection, Telegram push on new remedy.
