@@ -44,16 +44,14 @@ Spec-first: every phase gets a `specs/YYYY-MM-DD-<name>/` directory containing
 - [x] Diagnosis chain updated to include treatment prescription
 - [ ] ⚠️ Prolog flag: if ailment catalog grows beyond ~10 ailments with overlapping symptom patterns, consider replacing LangChain classification with a Prolog rule engine (see Phase 6 spec)
 
-## Phase 7 — Visit Log (replaces Appointment Booking)
-- [ ] Merged into Phase 9 — visits are created automatically when a diagnosis runs
-- [ ] No manual appointment booking — agents "visit" when they submit symptoms
+## ~~Phase 7 — Appointment Booking~~ *(dropped — not needed)*
 
 ## Phase 8 — Staff Dashboard
 - [x] `/dashboard` with four views:
-  - Summary counts: total agents, open appointments, active ailments
+  - Summary counts: total agents, active ailments, diagnosis runs this week
   - Agent health table: current ailment + token usage flagged if high
   - Ailment trends: most common ailments, treatment effectiveness rates
-  - Appointment queue: upcoming appointments with status
+  - Recent diagnosis runs: agent, ailment, therapy, outcome
 
 ## Phase 9 — Visit Log + Outcomes
 - [x] `outcome` + `visit_number` columns added to `diagnosis_runs`
@@ -72,5 +70,28 @@ Spec-first: every phase gets a `specs/YYYY-MM-DD-<name>/` directory containing
 
 ---
 
-Later phases (not yet planned): auth, deployment, reporting exports, API endpoint
-for agents to submit symptoms programmatically.
+## Phase 11 — Self-Healing: API, Treatment Executor, AIBriefing Integration
+- [x] `POST /api/diagnose` — JSON endpoint for sessions to submit symptoms
+- [x] `GET /api/diagnose/{id}` — returns diagnosis run status + treatment steps
+- [x] `PATCH /api/diagnose/{id}/approve` — called by AIBriefing on staff approval
+- [x] Treatment step generator — maps therapy × session type to concrete steps
+- [x] AIBriefing `remedies` table — pending approvals queue
+- [x] AIBriefing `remedies.py` — `add_remedy`, `get_pending_remedies`, `update_remedy_status`
+- [x] `chat.py` "review remedies" command — approve/reject flow
+- [x] Evening digest: "Agent Health Today" card — today's diagnosis runs, ailment, therapy, status
+- [x] Insights dashboard: pending remedy count stat + "Agent Health Trends" bar chart (7 days)
+- [x] `/diagnose` skill for Claude Code / Codex sessions
+- [x] End-to-end: session → diagnose → queue → approve → treatment steps
+
+## Phase 12 — Real-Agent Self-Healing: Log Watcher + Human-in-the-Loop
+- [ ] `log_patterns.py` — error pattern registry (regex → agent/symptoms)
+- [ ] `log_watcher.py` — tails Pepper + AIBriefing error logs, POSTs on match
+- [ ] 30-minute dedup window (no repeat POSTs for same error)
+- [ ] `treatment.py` updated with `"bot"` session-type steps (manual instructions)
+- [ ] Evening digest: bot health subsection with "auto-detected" badge
+- [ ] Insights dashboard: bot issues frequency chart (7 days, by bot)
+- [ ] End-to-end: error in log → remedy in AIBriefing queue → approve via chat.py
+
+---
+
+Later phases (not yet planned): auth, deployment, reporting exports, automated symptom detection, Telegram push on new remedy.

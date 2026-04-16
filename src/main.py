@@ -44,6 +44,10 @@ load_dotenv()
 
 app = FastAPI()
 
+from src.api import router as api_router
+
+app.include_router(api_router)
+
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
